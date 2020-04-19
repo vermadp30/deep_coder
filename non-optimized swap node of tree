@@ -1,0 +1,135 @@
+ #!/bin/python3
+
+import os
+import sys
+from queue import Queue 
+#
+# Complete the swapNodes function below.
+#
+class Node():
+    def __init__(self,data):
+        self.data=data;
+        self.left=None;
+        self.right=None;
+        self.height=0;
+class btree():
+    def __init__(self):
+        self.root=Node(1);
+        self.root.height=1;
+        self.ht=1;
+    def updateh(self,parent,node):
+        node.height=parent.height+1;
+        if(node.height>self.ht):
+            self.ht=node.height;   
+    def getheight(self):
+        return self.ht;         
+    def insert(self,indexes):
+            q=Queue(0);
+            q.put(self.root)
+            i=0;
+            while i<len(indexes):
+             node=q.get();   
+             q=self.insertNode(node,indexes[i][0],indexes[i][1],q);
+             i=i+1;
+    def insertNode(self,root,a,b,q):
+        if(a!=-1):    
+         root.left=Node(a);
+         self.updateh(root,root.left);
+         q.put(root.left); 
+        if(b!=-1):    
+         root.right=Node(b);
+         self.updateh(root,root.right);
+         q.put(root.right); 
+        return q;
+    def trav(self):
+        lis=[]
+        if self.root is not None:
+            lis=self.inorder(self.root,lis);
+        return lis    
+    def inorder(self,node,lis):
+        if node.left is not None:
+            lis=self.inorder(node.left,lis);
+        lis.append(node.data);
+        if node.right is not None:
+            lis=self.inorder(node.right,lis);
+        return lis    
+    def getlevel(self,k):
+        q1=Queue(0);
+        node=self.root;
+        q1=self.traverse(node,k,q1);
+        return q1;
+    def traverse(self,node,k,q1):
+        if node.height==k:
+            q1.put(node);
+        else:    
+         if node.left is not None:
+            q1=self.traverse(node.left,k,q1);
+         if node.right is not None:
+            q1=self.traverse(node.right,k,q1);
+        return q1    
+            
+
+    
+def swapNodes(indexes, queries):
+   bt=btree();
+   bt.insert(indexes);
+   h=bt.getheight();
+   q1=Queue(0);
+   result=[];
+   for i in queries:
+    j=2; 
+    k=i;
+    while(k<h):
+        q1=bt.getlevel(k);
+        while not(q1.empty()):
+          node=q1.get();
+          node1=node.left;
+          node.left=node.right;
+          node.right=node1
+        k=i*j;
+        j=j+1;
+    result.append(bt.trav());
+   return result
+
+
+'''def binary(arr):
+    bt=[];
+    bt.append(1)
+    i=0;
+    loc=1
+    while(i<len(arr)):
+        k=int((loc+1)/2)-1
+        print("k=",k,"bt= ",bt[k]);
+        if(bt[k]!=-1):
+            bt.append(int(arr[i][0]));
+            bt.append(int(arr[i][1]));
+            i=i+1;
+        else:
+            bt.append(-1);
+            bt.append(-1);
+        loc=loc+2;   
+    return bt;'''
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    n = int(input())
+
+    indexes = []
+
+    for _ in range(n):
+        indexes.append(list(map(int, input().rstrip().split())))
+
+    queries_count = int(input())
+
+    queries = []
+
+    for _ in range(queries_count):
+        queries_item = int(input())
+        queries.append(queries_item)
+
+    result = swapNodes(indexes, queries)
+
+    fptr.write('\n'.join([' '.join(map(str, x)) for x in result]))
+    fptr.write('\n')
+
+    fptr.close()
