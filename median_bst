@@ -1,0 +1,98 @@
+class Node(object):
+    def __init__(self,data,index):
+        self.data=data
+        self.index=index
+        self.left=None
+        self.right=None
+        #self.height=height'''
+class BST(object):
+    def __init__(self):
+        self.root=None       
+    def insert(self,data,index):
+        if self.root is None:
+            self.root=Node(data)
+        else:
+            root=insertNode(self.root,data,index)        
+    def insertNode(self,node,data,index):
+        if node is None:
+            node=Node(data,index)
+        else:
+            if(data<node.data):
+                insertNode(node.left,data,index)
+            elif(data>node.data):
+                insertNode(node.right,data,index)    
+            elif(index<node.index):
+                insertNode(node.left,data,index)
+            elif(index>node.index):
+                insertNode(node.right,data,index)     
+    def remove(self,data,index):
+        if self.root:
+            self.root=self.removeNode(data,index,self.root)
+    def removeNode(self,data,index,node):
+        if not node:
+            return node
+        if data<node.data:
+            node.left=self.removeNode(data,index,self.left)
+        elif data>node.data:
+            node.right=self.removeNode(data,index,self.right)                         
+        else:
+           if(node.index==index): 
+            if not node.left and not node.right:
+                del node;
+                return node
+            if not node.left:
+                tempnode=node.right
+                del node
+                return tempnode
+            elif not node.right:
+                tempnode=node.left
+                del node
+                return tempnode
+            tempnode=self.getpredecessor(node.left)
+            node.data=tempnode.data
+            node.left=self.removeNode(tempnode.data,index,node.left)
+           elif(index<node.index):
+             node.left=self.removeNode(data,index,self.left)  
+           elif(index>node.index):
+             node.right=self.removeNode(data,index,self.right)    
+        return node
+    def getpredecessor(self,node):
+        if(node.right):
+            return self.getpredecessor(node.right)
+        return node 
+    def get_minV(self):
+        if self.root:
+            return self.getmin(self,self.root)
+    def get_min(self,node):
+        if(node.left):
+            return self.get_min(node.left)
+        return [node.data,node.index]
+    def get_maxV(self):
+        if self.root:
+            return self.getmax(self,self.root)
+    def get_max(self,node):
+        if(node.right):
+            return self.get_max(node.right)
+        return [node.data,node.index]
+def activityNotifications(expenditure, d):
+    m=findMedian(expenditure,d)
+    count=0
+    for i in range(d,expenditure):
+        if(2*m[i-d]>=expenditure[i]):
+           count=count+1
+    return count       
+          
+def findMedian(arr,d):
+    med_set=[]
+    minset=BST()
+    maxset=BST()
+    pair=[]
+    for i in range(d):
+        pair.append([arr[i],i])   
+    for i in range(0,d//2):
+        maxset.insert(pair[i][0],pair[i][1])
+    for i in range(d//2,d):
+        if(maxset.get_maxV()[0]>arr[i]):
+            minset.insert(pair[i][0],pair[i][1])
+        else:
+            minset.insert(maxset.remove())   
