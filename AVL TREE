@@ -93,9 +93,8 @@ class AVL(object):
             return self.rotateRight(node)
         if balance<-1 and self.calcBalance(node.right)<=0:
             return self.rotateLeft(node)
-        if balance>1 and self.calcBalance(node.left<0):
+        if balance>1 and self.calcBalance(node.left)<0:
             node.left=self.rotateLeft(node.left)
-            return rotateRight(node)
             return self.rotateRight(node) 
         if balance<-1 and self.calcBalance(node.right)<=0:
             node.right=self.rotateRight(node.right)
@@ -116,3 +115,8 @@ class AVL(object):
         print(node.data,end=" ")
         if node.right:
             self.traverseInorder(node.right)
+    def getRoot(self):
+      if self.root:
+        return self.root.data
+      else:
+        return "EMPTY!!
